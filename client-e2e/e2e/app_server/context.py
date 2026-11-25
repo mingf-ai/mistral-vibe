@@ -27,14 +27,19 @@ def handshake(**overrides: Any) -> dict[str, Any]:
 
 
 def stats_updated(
-    context_tokens: int = 42_300, context_window: int = 200_000
+    context_tokens: int = 42_300,
+    context_window: int = 200_000,
+    last_turn_cached: int = 0,
 ) -> dict[str, Any]:
     return {
         "method": "session/statsUpdated",
         "params": {
             "sessionId": SESSION_ID,
             "emittedAt": 1_787_593_260_000,
-            "stats": {"contextTokens": context_tokens},
+            "stats": {
+                "contextTokens": context_tokens,
+                "lastTurnCachedTokens": last_turn_cached,
+            },
             "contextWindow": context_window,
         },
     }

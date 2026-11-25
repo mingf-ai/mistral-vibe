@@ -179,6 +179,8 @@ mod file_mention_unicode;
 mod focus;
 #[path = "units/fold_clicks.rs"]
 mod fold_clicks;
+#[path = "units/footer_cache.rs"]
+mod footer_cache;
 #[path = "units/footer_gauge.rs"]
 mod footer_gauge;
 #[path = "units/foreign_session.rs"]

@@ -67,6 +67,7 @@ pub fn draw(app: &mut App, f: &mut Frame, area: Rect) {
         copy_icon: path.is_some(),
         quit: quit.as_ref().map(Line::width),
         tokens: app.session.tokens,
+        cache: app.session.cache,
         usage: crate::usage_gauge::footer_usage(app),
     });
     let mut left = quit.map_or_else(Vec::new, |line| line.spans);
@@ -87,7 +88,7 @@ pub fn draw(app: &mut App, f: &mut Frame, area: Rect) {
         .iter()
         .map(|(text, _)| text.width())
         .sum::<usize>() as u16;
-    for gauge in [fitted.usage, fitted.context] {
+    for gauge in [fitted.usage, fitted.cache, fitted.context] {
         if gauge.is_empty() {
             continue;
         }
