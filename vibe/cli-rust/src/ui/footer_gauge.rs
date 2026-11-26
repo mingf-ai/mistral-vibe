@@ -1,5 +1,8 @@
 //! Footer gauges: the context window and the monthly Vibe Code usage, as bars on a track.
 
+use std::time::Duration;
+
+use crate::clock::{self, UiInstant};
 use crate::utils::text::format_compact_count;
 
 use super::footer_fit::{Form, Tone};
@@ -90,7 +93,53 @@ pub fn context_forms((current, max): (u64, u64)) -> Vec<Form> {
     ]
 }
 
-/// `usage ██▍    40%`, `usage ▃ 40%`, then `usage ▃`; `PAYG` follows when usage past 100% is billed.
+/// A warm provider prompt cache: the tokens the last turn was served from, and when that turn finished.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Cache {
+    pub cached_tokens: u64,
+    pub refreshed_at: UiInstant,
+}
+
+/// The provider refreshes a warm prefix's expiry on every hit; the footer's estimate follows this window.
+pub const CACHE_TTL: Duration = Duration::from_secs(60 * 60);
+
+/// `cache ▄ 182k·60m`, `cache ▄ 60m`, then `cache ▄`; absent while nothing is cached.
+pub fn cache_forms(cache: Option<Cache>) -> Vec<Form> {
+    let Some(Cache {
+        cached_tokens,
+        refreshed_at,
+    }) = cache
+    else {
+        return vec![];
+    };
+    cache_segment(
+        cached_tokens,
+        CACHE_TTL.saturating_sub(clock::since(refreshed_at)),
+    )
+}
+
+/// The cache gauge for `cached_tokens` with `remaining` of its estimated life left.
+pub fn cache_segment(cached_tokens: u64, remaining: Duration) -> Vec<Form> {
+    let percent = remaining.as_secs_f64() / CACHE_TTL.as_secs_f64() * 100.0;
+    let minutes = remaining.as_secs() / 60;
+    let label = || ("cache ".to_owned(), Tone::Muted);
+    let tail = |text: String| (format!(" {text}"), Tone::Muted);
+    vec![
+        vec![
+            label(),
+            level(percent),
+            tail(format!(
+                "{}\u{b7}{}m",
+                format_compact_count(cached_tokens),
+                minutes
+            )),
+        ],
+        vec![label(), level(percent), tail(format!("{minutes}m"))],
+        vec![label(), level(percent)],
+    ]
+}
+
+/// `usage ▮▮▮    40%`, `usage ▄ 40%`, then `usage ▄`; `PAYG` follows when usage past 100% is billed.
 pub fn usage_forms(usage: Option<Usage>) -> Vec<Form> {
     let Some(Usage { percent, payg }) = usage else {
         return vec![];

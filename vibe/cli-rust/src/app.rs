@@ -213,6 +213,8 @@ pub struct Session {
     pub artifacts_session: Option<String>,
     /// Artifacts whose status changed since the modal was last open; the bar marks them.
     pub artifacts_unseen: std::collections::HashSet<String>,
+    /// The warm prompt cache the footer's expiry gauge reads; set when a turn reports cached input tokens.
+    pub cache: Option<crate::ui::footer_gauge::Cache>,
     pub stats: crate::server::SessionStats,
     pub startup_config: StartupConfig,
     pub startup_error: Option<String>,

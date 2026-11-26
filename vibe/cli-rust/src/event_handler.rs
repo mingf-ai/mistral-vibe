@@ -861,6 +861,11 @@ pub fn apply_notification(app: &mut App, client: &Arc<Client>, event: &Notificat
             let stats: crate::server::SessionStats =
                 crate::utils::json::read(&event.params["stats"]);
             let current = stats.context_tokens;
+            let warm = stats.last_turn_cached_tokens > 0;
+            let cache = warm.then(|| crate::ui::footer_gauge::Cache {
+                cached_tokens: stats.last_turn_cached_tokens,
+                refreshed_at: crate::clock::now(),
+            });
             let max = event.params["contextWindow"].as_u64().unwrap_or(0);
             // The context progress masks the session budget with
             // the viewed child's own context usage while a subagent is viewed.
@@ -869,6 +874,7 @@ pub fn apply_notification(app: &mut App, client: &Arc<Client>, event: &Notificat
                 app.session.tokens = (current, max);
             }
             app.session.stats = stats;
+            app.session.cache = cache;
             // The `/context` app, when open, re-reads so its estimates follow the new reading.
             crate::context_app::refresh(app, client);
         }

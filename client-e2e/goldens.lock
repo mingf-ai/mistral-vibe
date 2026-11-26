@@ -471,6 +471,8 @@ file_mention/tab_keeps_popup_open 982a148f6033
 
 file_mention/vertical_caret_completion f017ea2887ed
 
+footer/cache_gauge fcfb84a01a29
+
 footer/copy_path 0c7cc71204ae
 
 footer/usage_after_model_switch c1c3a6a0c386

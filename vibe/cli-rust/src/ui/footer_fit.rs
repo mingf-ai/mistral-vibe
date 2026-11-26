@@ -3,7 +3,7 @@
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::UnicodeWidthStr;
 
-use super::footer_gauge::{context_forms, usage_forms, Usage};
+use super::footer_gauge::{cache_forms, context_forms, usage_forms, Cache, Usage};
 
 /// Between the gauges.
 pub const GAUGE_SEP: &str = " · ";
@@ -30,6 +30,7 @@ pub type Form = Vec<(String, Tone)>;
 #[derive(Clone, Copy)]
 enum Slot {
     Usage,
+    Cache,
     Context,
 }
 
@@ -38,14 +39,22 @@ impl Slot {
     fn index(self) -> usize {
         match self {
             Slot::Usage => 0,
-            Slot::Context => 1,
+            Slot::Cache => 1,
+            Slot::Context => 2,
         }
     }
 }
 
 /// Each step moves one segment to its next narrower form; a segment past its last form is hidden.
 /// The gauges turn from bars to one-cell levels, then lose their numbers, but never hide.
-const LADDER: [Slot; 4] = [Slot::Context, Slot::Usage, Slot::Context, Slot::Usage];
+const LADDER: [Slot; 6] = [
+    Slot::Context,
+    Slot::Usage,
+    Slot::Cache,
+    Slot::Context,
+    Slot::Usage,
+    Slot::Cache,
+];
 /// The steps taken before the cwd shortens: the gauges turn into levels.
 const BEFORE_CWD: usize = 2;
 
@@ -57,6 +66,7 @@ pub struct Inputs<'a> {
     /// The quit hint's width; it replaces the cwd and never shrinks.
     pub quit: Option<usize>,
     pub tokens: (u64, u64),
+    pub cache: Option<Cache>,
     pub usage: Option<Usage>,
 }
 
@@ -67,6 +77,7 @@ pub struct Fitted {
     /// Paint the copy icon after the shortened cwd.
     pub copy_icon: bool,
     pub context: Form,
+    pub cache: Form,
     pub usage: Form,
 }
 
@@ -93,6 +104,7 @@ pub fn fit(inputs: Inputs) -> Fitted {
     let quit = inputs.quit.is_some();
     let mut segments = [
         Segment::new(usage_forms(inputs.usage)),
+        Segment::new(cache_forms(inputs.cache)),
         Segment::new(context_forms(inputs.tokens)),
     ];
     let cwd_full = inputs.quit.unwrap_or_else(|| inputs.cwd.width());
@@ -124,7 +136,7 @@ pub fn fit(inputs: Inputs) -> Fitted {
         .rev()
         .find(|&cells| total(&segments, cwd(cells)) <= inputs.width)
         .unwrap_or(0);
-    let [usage, context] = segments.map(|segment| segment.current());
+    let [usage, cache, context] = segments.map(|segment| segment.current());
     Fitted {
         cwd: if quit {
             String::new()
@@ -133,15 +145,17 @@ pub fn fit(inputs: Inputs) -> Fitted {
         },
         copy_icon: icon > 0 && shortened(cwd_width),
         context,
+        cache,
         usage,
     }
 }
 
 /// The whole row's cells with a `cwd`-cell cwd: left side, one-cell spacer, right side.
-fn total(segments: &[Segment; 2], cwd: usize) -> usize {
-    let [usage, context] = segments.each_ref().map(Segment::width);
-    let sep = GAUGE_SEP.width() * usize::from(usage > 0 && context > 0);
-    let right = usage + context + sep;
+fn total(segments: &[Segment; 3], cwd: usize) -> usize {
+    let widths = segments.each_ref().map(Segment::width);
+    let nonempty = widths.iter().filter(|width| **width > 0).count();
+    let sep = GAUGE_SEP.width() * nonempty.saturating_sub(1);
+    let right: usize = widths.iter().sum::<usize>() + sep;
     cwd + right + usize::from(cwd > 0 && right > 0)
 }
 
