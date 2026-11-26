@@ -14,7 +14,7 @@ timeline: Timeline = [
     stats_updated(last_turn_cached=182_340),
     turn_completed(),
     take_snapshot(),
-    advance(59 * 60 * 1000),
+    advance(1000),
     take_snapshot(),
 ]
-screen_contains = ("cache ▁ 182k·1m", "ctx █▎     42.3k/200k")
+screen_contains = ("cache ▇ 182k·59m", "ctx █▎     42.3k/200k")

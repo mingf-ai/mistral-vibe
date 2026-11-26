@@ -471,7 +471,7 @@ file_mention/tab_keeps_popup_open 982a148f6033
 
 file_mention/vertical_caret_completion f017ea2887ed
 
-footer/cache_gauge 45c11ab0d31d
+footer/cache_gauge fcfb84a01a29
 
 footer/copy_path 0c7cc71204ae
 
@@ -1166,6 +1166,14 @@ proxy_setup/paste 17c382f3b151
 proxy_setup/prefilled 17c382f3b151
 
 proxy_setup/read_error 17c382f3b151
+
+proxy_setup/resize 17c382f3b151
+
+proxy_setup/save 73062986df69
+
+proxy_setup/save_error 6e3c4fd1007a
+
+proxy_setup/type_ovesetup/read_error 17c382f3b151
 
 proxy_setup/resize 17c382f3b151
 
