@@ -329,6 +329,8 @@ pub struct View {
     pub selection_scrollbar: ui::scrollbar::State,
     /// Current chat input box, used to map mouse drags to the editor document.
     pub input_area: Rect,
+    /// Transcript viewport rows painted last frame; PageUp/PageDown page by it.
+    pub transcript_height: u16,
     /// Mouse regions from the latest frame, bounded by the painted UI.
     pub mouse_regions: Vec<crate::mouse::MouseRegion>,
     /// Captured mouse gesture and scrollbar state.
@@ -412,6 +414,7 @@ impl Default for View {
             selection_hangs: Vec::new(),
             selection_scrollbar: ui::scrollbar::State::default(),
             input_area: Rect::default(),
+            transcript_height: 0,
             mouse_regions: Vec::new(),
             mouse: crate::mouse::MouseState::default(),
             banner: Banner::default(),

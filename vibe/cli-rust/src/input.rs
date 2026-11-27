@@ -460,8 +460,13 @@ fn handle_key_inner(
         KeyCode::Down if completion_manager::is_open(app) => {
             completion_manager::navigate(app, true)
         }
-        KeyCode::PageUp if key.modifiers.is_empty() => move_cursor_page(app, false),
-        KeyCode::PageDown if key.modifiers.is_empty() => move_cursor_page(app, true),
+        // Bare PageUp/PageDown page the transcript; Shift pages the input caret.
+        KeyCode::PageUp if key.modifiers.is_empty() => scroll_chat(app, true, transcript_page(app)),
+        KeyCode::PageDown if key.modifiers.is_empty() => {
+            scroll_chat(app, false, transcript_page(app))
+        }
+        KeyCode::PageUp if shift => move_cursor_page(app, false),
+        KeyCode::PageDown if shift => move_cursor_page(app, true),
         // Up/Down move the caret within a multi-line chat input; at the top/bottom
         // they recall input history.
         KeyCode::Up => {
@@ -554,6 +559,11 @@ fn move_cursor_page(app: &mut App, down: bool) {
     app.chat_input.snap_cursor(from);
     mark_cursor_moved(app);
     completion_manager::refresh(app);
+}
+
+/// Rows the transcript viewport showed last frame; a page key scrolls by it.
+fn transcript_page(app: &App) -> u16 {
+    app.view.transcript_height.max(1)
 }
 
 /// The `/theme` picker owns keys: arrows/jk preview, Enter selects, Esc reverts.

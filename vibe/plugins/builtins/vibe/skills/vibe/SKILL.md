@@ -120,7 +120,7 @@ popup, reverse-search matches and the queued prompts.
 | `Alt+B`, `Ctrl+Left`, `Alt+Left` / `Alt+F`, `Ctrl+Right`, `Alt+Right` | Caret one word left / right |
 | `Ctrl+A` / `Home` / `Cmd+Left`, `Ctrl+E` / `End` / `Cmd+Right` | Caret to line start / end |
 | `Ctrl+P` / `Up`, `Ctrl+N` / `Down` | Previous / next line; on the first or last line, recall prompt history (see Prompt History) |
-| `PgUp` / `PgDn` | Caret one page up / down |
+| `Shift+PgUp` / `Shift+PgDn` | Caret one page up / down |
 | `Backspace`, `Ctrl+H` / `Delete`, `Ctrl+D` | Delete one character left / right (`Ctrl+D` on an empty prompt quits) |
 | `Ctrl+W`, `Ctrl+Backspace`, `Alt+Backspace`, `Ctrl+Alt+H` | Delete the word left |
 | `Alt+D`, `Ctrl+Delete`, `Alt+Delete` | Delete the word right |
@@ -146,7 +146,8 @@ Other keys in the main view:
 | `Esc` | Interrupt the turn; twice on an empty prompt opens rewind, twice on a draft clears it |
 | `Ctrl+C` / `Ctrl+D` / `Ctrl+Z` | Interrupt or quit / quit on an empty prompt / suspend (see Exit) |
 | `Shift+Tab` | Cycle the approval policy |
-| `Shift+Up/Down` | Scroll the transcript |
+| `Shift+Up/Down` | Scroll the transcript one row |
+| `PageUp/PageDown` | Scroll the transcript one page |
 | `Ctrl+O` | Expand or collapse every tool group and result |
 | `Ctrl+X` | Focus the status rail (see the rail under Built-in Slash Commands) |
 | `Ctrl+T` | Start or stop voice recording (with voice mode on) |

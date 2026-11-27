@@ -1405,6 +1405,8 @@ scroll/jump_to_bottom e24707cd5418
 
 scroll/mouse_scroll 9d0472850a6d
 
+scroll/page_keys 27483b69a275
+
 scroll/scroll 5fcfbe4020a2
 
 scroll/scrollbar dedf4219f559

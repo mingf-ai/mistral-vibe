@@ -215,6 +215,7 @@ fn draw_base(app: &mut App, f: &mut Frame, area: ratatui::layout::Rect) {
     .split(area);
 
     app.view.input_area = chunks[4];
+    app.view.transcript_height = chunks[0].height;
     // A child view swaps the rendered transcript in the same scroll region.
     // The render cache and the last measured height belong to the transcript:
     // their revision streams are independent, so both must follow the swap.

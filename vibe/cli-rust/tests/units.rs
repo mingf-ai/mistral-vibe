@@ -660,6 +660,8 @@ mod tool_group_membership;
 mod transcript_diff;
 #[path = "units/transcript_images.rs"]
 mod transcript_images;
+#[path = "units/transcript_page_keys.rs"]
+mod transcript_page_keys;
 #[path = "units/transcript_patch.rs"]
 mod transcript_patch;
 #[path = "units/transcript_tool_group.rs"]
